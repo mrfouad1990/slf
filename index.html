@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selfie Service</title>
+</head>
+<body>
+    <h1>Selfie Service</h1>
+    <form id="generate-form">
+        <input type="text" id="selfie-code" placeholder="Enter Selfie Code" required />
+        <button type="submit">Generate Link</button>
+    </form>
+    <div id="selfie-link"></div>
+
+    <hr />
+
+    <form id="confirm-form">
+        <input type="text" id="confirmation-code" placeholder="Enter Confirmation Code" required />
+        <button type="submit">Confirm Selfie</button>
+    </form>
+    <div id="confirmation-response"></div>
+
+    <script>
+        document.getElementById('generate-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const selfieCode = document.getElementById('selfie-code').value;
+
+            const response = await fetch('/generate-selfie', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selfieCode }),
+            });
+            const result = await response.json();
+            document.getElementById('selfie-link').innerHTML = result.selfieLink
+                ? `<a href="${result.selfieLink}" target="_blank">${result.selfieLink}</a>`
+                : result.error;
+        });
+
+        document.getElementById('confirm-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const confirmationCode = document.getElementById('confirmation-code').value;
+
+            const response = await fetch('/confirm-selfie', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ confirmationCode }),
+            });
+            const result = await response.json();
+            document.getElementById('confirmation-response').innerText = result.message || result.error;
+        });
+    </script>
+</body>
+</html>
